@@ -116,7 +116,7 @@ def model_train(data):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
-    for epoch in range(10):
+    for epoch in range(15):
 
         running_loss = 0.0
         for i, data in enumerate(loader, 1):
@@ -205,6 +205,6 @@ def softmax(x):
 
 if __name__ == '__main__':
     data = Data(field='breed', imdir='./raw-img')
-    model_eval('./raw-img/cane/OIF-e2bexWrojgtQnAPPcUfOWQ.jpeg')
+    print(model_eval('/tmp/caca.jpg'))
     # model_train(data)
     # model_test(data)

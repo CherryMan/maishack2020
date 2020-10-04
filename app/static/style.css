@@ -1,7 +1,12 @@
-
 body {
-    text-align: center;
     font-family: Verdana, Geneva, sans-serif; 
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.possibilities {
+  text-align: left;
 }
 
 .title {

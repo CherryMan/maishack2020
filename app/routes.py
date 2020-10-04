@@ -27,18 +27,18 @@ def upload_file():
             filename = secure_filename(file.filename)
             path = f"{app.config['UPLOAD_FOLDER']}/{filename}"
             file.save(path)
-            pred_data = model_eval(path)
-            return redirect(url_for('uploaded_file',
-                                    filename=filename,
-                                    prediction = pred_data[0],
-                                    probabilities = pred_data[1]))
+            return redirect(url_for('prediction', filename=filename))
     return render_template('upload.html')
     
 
-@app.route('/catbreedfound', methods=['GET', 'POST'])
-def uploaded_file():
+@app.route('/prediction', methods=['GET', 'POST'])
+def prediction():
+    filename = request.args.get('filename')
+    pred, probs = model_eval(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    probs = sorted(list(probs.items()), key=lambda x: x[1], reverse=True)
+
     return render_template(
         'display.html',
-        filename=request.args.get('filename'),
-        prediction=request.args.get('prediction'),
-        probabilities=request.args.get)
+        filename=filename,
+        prediction=pred,
+        probabilities=probs)

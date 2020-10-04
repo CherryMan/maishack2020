@@ -7,18 +7,26 @@
     <body>
         <div class="big-title">Animal Guesser</div>
         <div class="title">Your animal is (probably) a {{ prediction }}!</div>
-          <div class="column">
-            <figure>
-                <img class="final-image" height = "500px" src = "../static/tested-images/{{ filename }}">
-            </figure>
-          </div>
-          <p>
-            Thanks for using Animal Guesser! None of this would be possible without 
-            <a href = "https://www.kaggle.com/alessiocorrado99/animals10">
-              this
-            </a> 
-            dataset!
-          </p>
+        <div class="column">
+          <figure>
+            <img class="final-image" height = "500px" src = "../static/tested-images/{{ filename }}">
+          </figure>
+        </div>
+        <div class="possibilities">
+          Other possibilities
+          <ol>
+            {% for animal, probability in probabilities %} 
+            <li>{{ "%.2f" | format(probability * 100) }}% chance of being a {{ animal }}</li> 
+            {% endfor %} 
+          </ol>
+        </div>
+        <p>
+          Thanks for using Animal Guesser! None of this would be possible without 
+          <a href = "https://www.kaggle.com/alessiocorrado99/animals10">
+            this
+          </a> 
+          dataset!
+        </p>
     </body>
 
 </html>

@@ -5,3 +5,4 @@ images/
 raw-img/
 data/
 *.pth
+/app/static/tested-images/
