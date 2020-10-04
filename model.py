@@ -15,10 +15,8 @@ import torchvision.transforms as transforms
 import torch.optim as optim
 
 SEED = 0
-CATEGORY_THRESH = 1000
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-PIL.ImageFile.LOAD_TRUNCATED_IMAGES = True
 torch.manual_seed(SEED)
 print(DEVICE)
 
@@ -75,9 +73,6 @@ class Data:
         data['fname'] = pd.Series(fnames)
         data = data.dropna(subset=['fname'])
 
-        cols = data[class_type].value_counts().ge(CATEGORY_THRESH)
-        data = data[data[class_type].isin(cols[cols].index)]
-
         self.data = data
         self.classes = list(pd.unique(self.data[class_type]))
         self.class_type = class_type
@@ -86,7 +81,7 @@ class Data:
         }
 
         self.train, self.test = train_test_split(self.data,
-                       train_size=0.8, random_state=SEED, shuffle=True)
+                           train_size=0.8, random_state=SEED)
 
         self.train_set = Dataset(self.train,
             class_type=class_type, class_list=self.class_list)
@@ -117,7 +112,7 @@ class Net(nn.Module):
 
 def model_train(data):
     loader = utils.data.DataLoader(
-        data.train_set, batch_size=16, shuffle=True, num_workers=0)
+        data.train_set, batch_size=16, shuffle=False, num_workers=0)
 
     net = Net(6, len(data.classes))
     net.to(DEVICE)
@@ -146,7 +141,6 @@ def model_train(data):
     print('Done')
     torch.save(net.state_dict(), './model.pth')
 
-
 def model_test(data):
     net = Net(6, len(data.classes))
     net.to(DEVICE)
@@ -155,29 +149,18 @@ def model_test(data):
     testloader = utils.data.DataLoader(
         data.test_set, batch_size=4, shuffle=False, num_workers=0)
 
-    correct = 0
-    total = 0
-    class_correct = [0] * len(data.classes)
-    class_total = [0] * len(data.classes)
-    with torch.no_grad():
-        for images, labels, idx in testloader:
-            images, labels = images.to(DEVICE), labels.to(DEVICE)
-            outputs = net(images)
-            _, predicted = torch.max(outputs.data, 1)
+    def imshow(img):
+        img = img / 2 + 0.5
+        npimg = img.numpy()
+        plt.imshow(np.transpose(npimg, (1, 2, 0)))
+        plt.show()
 
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
+    it = iter(testloader)
+    images, labels, idx = it.next()
 
-            c = (predicted == labels).squeeze()
-            for i, l in enumerate(labels.tolist()):
-                class_correct[l] += c[i].item()
-                class_total[l] += 1
+    print(' '.join('%5s' % data.classes[labels[i]] for i in range(4)))
+    imshow(tv.utils.make_grid(images))
 
-    print('Accuracy: %3.1f%% on %d' % (100. * correct / total, total))
-
-    for i, c in enumerate(data.classes):
-        print('%20s: %3.1f%% on %4d' %
-          (c, 100. * class_correct[i] / class_total[i], class_total[i]))
 
 if __name__ == '__main__':
     data = Data(class_type='breed')

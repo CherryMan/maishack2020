@@ -3,35 +3,24 @@
     <head>
         <link rel="stylesheet" href="../static/style.css">
     </head>
-    <title>Cat breed predictor</title>
+    <title>Animal Guesser</title>
     <body>
-        <div class="title">Your cat is a {{ prediction }} </div>
-        
-        
-        <div class="row">
-            <figure class="column">
-              <img src="../static/bengal.jpg">
-              <figcaption>Bengal</figcaption>
-            </figure>
-            <figure class="column">
-              <img src="../static/persian.jpg">
-              <figcaption>Persian</figcaption>
-            </figure>
-            <figure class="column">
-              <img src="../static/siamese.jpg">
-              <figcaption>Siamese</figcaption>
-            </figure>
-            <figure class="column">
-                <img src="../static/sphinx.png">
-                <figcaption>Sphinx</figcaption>
+        <div class="big-title">Animal Guesser</div>
+        <div class="title">Your animal is a {{ prediction }}!</div>
+
+          <div class="column">
+            <figure>
+                <img class="final-image" height = "500px" src = "../static/{{ filename }}">
             </figure>
           </div>
-          <div class="row">
-            <figure class="column">
-                <img src = "../static/{{ filename }}">
-                <figcaption>{{ prediction }}</figcaption>
-            </figure>
-          </div>
+
+          <p>
+            Thanks for using Animal Guesser! None of this would be possible without 
+            <a href = "https://www.kaggle.com/alessiocorrado99/animals10">
+              this
+            </a> 
+            dataset!
+          </p>
     </body>
 
 </html>
