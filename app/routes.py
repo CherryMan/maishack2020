@@ -23,8 +23,7 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            print(path)
+            path = f"{app.config['UPLOAD_FOLDER']}/{filename}"
             file.save(path)
             return redirect(url_for('uploaded_file',
                                     filename=filename,
@@ -36,5 +35,5 @@ def upload_file():
 def uploaded_file():
     return render_template(
         'display.html',
-        filename=f"{app.config['UPLOAD_FOLDER']}\{request.args.get('filename')}",
+        filename=request.args.get('filename'),
         prediction=request.args.get('prediction'))
