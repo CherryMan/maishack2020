@@ -10,6 +10,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torch.utils as utils
 import torchvision.transforms as transforms
+import torch.optim as optim
 
 class Image:
     SIZE = 40
@@ -97,3 +98,5 @@ if __name__ == '__main__':
         print(train_batch)
         print(labels_batch)
         time.sleep(1)
+
+print('Finished Training')
