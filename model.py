@@ -14,6 +14,8 @@ import torchvision as tv
 import torchvision.transforms as transforms
 import torch.optim as optim
 
+translate_dict = {"cane": "dog","ragno" : "spider", "cavallo": "horse", "elefante": "elephant", "farfalla": "butterfly", "gallina": "chicken", "gatto": "cat", "mucca": "cow", "pecora": "sheep", "scoiattolo": "squirrel"}
+
 SEED = 0
 CATEGORY_THRESH = 1000
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -187,10 +189,22 @@ def model_eval(path):
     img = Image.load(path).unsqueeze(0).to(DEVICE)
     outputs = net_(img)
     _, predicted = torch.max(outputs.data, 1)
-    return data_.classes[predicted.tolist()[0]]
+
+    probabilities = softmax(outputs.data[0].tolist())
+    animal_probabilities_dict = {}
+
+    for i in range(len(probabilities)):
+        animal_probabilities_dict[translate_dict[data_.classes[i]]] = round(probabilities[i], 4)
+    return (translate_dict[data_.classes[predicted.tolist()[0]]], animal_probabilities_dict)
+
+def softmax(x):
+    """Compute softmax values for each sets of scores in x."""
+    e_x = np.exp(x - np.max(x))
+    return e_x / e_x.sum()
 
 
 if __name__ == '__main__':
     data = Data(field='breed', imdir='./raw-img')
-    model_train(data)
-    model_test(data)
+    model_eval('./raw-img/cane/OIF-e2bexWrojgtQnAPPcUfOWQ.jpeg')
+    # model_train(data)
+    # model_test(data)

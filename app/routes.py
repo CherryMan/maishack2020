@@ -1,8 +1,10 @@
 import os
 from flask import Flask, flash, request, redirect, url_for, render_template, send_from_directory
 from app import app
+from model import model_eval
 from werkzeug.utils import secure_filename
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -25,9 +27,11 @@ def upload_file():
             filename = secure_filename(file.filename)
             path = f"{app.config['UPLOAD_FOLDER']}/{filename}"
             file.save(path)
+            pred_data = model_eval(path)
             return redirect(url_for('uploaded_file',
                                     filename=filename,
-                                    prediction = "chelsea"))
+                                    prediction = pred_data[0],
+                                    probabilities = pred_data[1]))
     return render_template('upload.html')
     
 
@@ -36,4 +40,5 @@ def uploaded_file():
     return render_template(
         'display.html',
         filename=request.args.get('filename'),
-        prediction=request.args.get('prediction'))
+        prediction=request.args.get('prediction'),
+        probabilities=request.args.get)
