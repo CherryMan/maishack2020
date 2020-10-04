@@ -83,10 +83,10 @@ class Data:
 
 
 class Net(nn.Module):
-    def __init__(self, din, dout):
+    def __init__(self, dout):
         super(Net, self).__init__()
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv1 = nn.Conv2d(3, din, 5)
+        self.conv1 = nn.Conv2d(3, 6, 5)
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.fc1 = nn.Linear(16 * 9 ** 2, 120)
         self.fc2 = nn.Linear(120, 84)
@@ -106,7 +106,7 @@ def model_train(data):
     loader = utils.data.DataLoader(
         data.train_set, batch_size=16, shuffle=True, num_workers=0)
 
-    net = Net(6, len(data.classes))
+    net = Net(len(data.classes))
     net.to(DEVICE)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
@@ -135,7 +135,7 @@ def model_train(data):
 
 
 def model_test(data):
-    net = Net(6, len(data.classes))
+    net = Net(len(data.classes))
     net.to(DEVICE)
     net.load_state_dict(torch.load('./model.pth'))
 
