@@ -3,39 +3,56 @@
   <head>
     <link rel="stylesheet" href="../static/style.css">
   </head>
-    <title>Cat breed predictor</title>
+    <title>Animal guesser</title>
     <body>
-      <div class="title">Upload an image of your cat!</div>
+      <div class="big-title">Animal Guesser</div>
+      <div class="title">Upload an image of an animal!</div>
       <p>
         Using a convolutional neural network and 
-        <a href = "https://www.kaggle.com/ma7555/cat-breeds-dataset">
+        <a href = "https://www.kaggle.com/alessiocorrado99/animals10">
           this
         </a> 
-        dataset, we trained a model to classify cat images according to their breed.
-        Upload an image of your cat to find out what breed your furry friend belongs to!
+        dataset, we trained a model to guess which of the following ten animals an image contains.
       </p>
-      <div class="row">
-        <figure class="column">
-          <img src="../static/bengal.jpg">
-          <figcaption>Bengal</figcaption>
-        </figure>
-        <figure class="column">
-          <img src="../static/persian.jpg">
-          <figcaption>Persian</figcaption>
-        </figure>
-        <figure class="column">
-          <img src="../static/siamese.jpg">
-          <figcaption>Siamese</figcaption>
-        </figure>
-        <figure class="column">
-          <img src="../static/sphinx.png">
-          <figcaption>Sphinx</figcaption>
-        </figure>
-      </div>
-
       <form method=post enctype=multipart/form-data>
         <input type=file name=file>
         <input type=submit value=Upload>
       </form>
+      <div class="row">
+        <figure class="column">
+          <img src="../static/spider.jpg">
+        </figure>
+        <figure class="column">
+          <img src="../static/butterfly.jpg">
+        </figure>
+        <figure class="column">
+          <img src="../static/squirrel.jpg">
+        </figure>
+        <figure class="column">
+          <img src="../static/chicken.jpg">
+        </figure>
+      </div>
+      <div class="row">
+        <figure class="column">
+          <img src="../static/cat.png">
+        </figure>
+        <figure class="column">
+          <img src="../static/dog.jpg">
+        </figure>
+        <figure class="column">
+          <img src="../static/sheep.jpg">
+        </figure>
+      </div>
+      <div class="row">
+        <figure class="column">
+          <img src="../static/horse.jpg">
+        </figure>
+        <figure class="column">
+          <img src="../static/cow.jpg">
+        </figure>
+        <figure class="column">
+          <img src="../static/elephant.jpg">
+        </figure>
+      </div>
     </body>
 </html>

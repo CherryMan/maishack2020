@@ -166,6 +166,7 @@ def model_test(data):
         print('%20s: %3.1f%% on %4d' %
           (c, 100. * class_correct[i] / class_total[i], class_total[i]))
 
+
 if __name__ == '__main__':
     data = Data(field='breed', imdir='./raw-img')
     model_train(data)
