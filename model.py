@@ -166,10 +166,3 @@ if __name__ == '__main__':
     data = Data(class_type='breed')
     model_train(data)
     model_test(data)
-    import time
-    for train_batch, labels_batch in loader:
-        print(train_batch)
-        print(labels_batch)
-        time.sleep(1)
-
-print('Finished Training')
