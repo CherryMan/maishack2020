@@ -23,7 +23,7 @@ torch.manual_seed(SEED)
 print(DEVICE)
 
 class Image:
-    SIZE = 48
+    SIZE = 96
 
     transform = transforms.Compose([
         transforms.Resize((SIZE, SIZE)),
@@ -85,17 +85,20 @@ class Data:
 class Net(nn.Module):
     def __init__(self, dout):
         super(Net, self).__init__()
-        self.pool = nn.MaxPool2d(2, 2)
-        self.conv1 = nn.Conv2d(3, 6, 5)
-        self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 9 ** 2, 120)
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, dout)
+        self.pool = nn.AvgPool2d(2, 2)
+        self.conv1 = nn.Conv2d(3, 64, 5)
+        self.conv2 = nn.Conv2d(64, 32, 4)
+        self.conv3 = nn.Conv2d(32, 16, 3)
+        self.fc1 = nn.Linear(16 * 43 ** 2, 64)
+        self.fc2 = nn.Linear(64, 32)
+        self.fc3 = nn.Linear(32, dout)
 
     def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = x.view(-1, 16 * 9 ** 2)
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+        x = self.pool(x)
+        x = x.view(-1, 16 * 43 ** 2)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
@@ -104,14 +107,14 @@ class Net(nn.Module):
 
 def model_train(data):
     loader = utils.data.DataLoader(
-        data.train_set, batch_size=16, shuffle=True, num_workers=0)
+        data.train_set, batch_size=32, shuffle=True, num_workers=0)
 
     net = Net(len(data.classes))
     net.to(DEVICE)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
-    for epoch in range(4):
+    for epoch in range(10):
 
         running_loss = 0.0
         for i, data in enumerate(loader, 1):
@@ -126,7 +129,7 @@ def model_train(data):
 
             running_loss += loss.item()
             if i % 50 == 0:
-                print('[%d, %4d, %3.0f%%] loss: %.3f' %
+                print('[%2d, %4d, %3.0f%%] loss: %.3f' %
                   (epoch + 1, i, 100. * i / len(loader), running_loss / 50))
                 running_loss = 0.0
 
@@ -165,6 +168,26 @@ def model_test(data):
     for i, c in enumerate(data.classes):
         print('%20s: %3.1f%% on %4d' %
           (c, 100. * class_correct[i] / class_total[i], class_total[i]))
+
+
+data_ = None
+net_ = None
+def model_eval(path):
+    global data_
+    global net_
+
+    if data_ is None:
+        data_ = Data(field='breed', imdir='./raw-img')
+
+    if net_ is None:
+        net_ = Net(len(data_.class_list))
+        net_.to(DEVICE)
+        net_.load_state_dict(torch.load('./model.pth'))
+
+    img = Image.load(path).unsqueeze(0).to(DEVICE)
+    outputs = net_(img)
+    _, predicted = torch.max(outputs.data, 1)
+    return data_.classes[predicted.tolist()[0]]
 
 
 if __name__ == '__main__':
