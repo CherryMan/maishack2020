@@ -1,0 +1,29 @@
+
+body {
+    background-color: lightblue;
+    text-align: center;
+    font-family: Palatino,Palatino Linotype,Palatino LT STD,Book Antiqua,Georgia,serif; 
+}
+
+.title {
+    font-size: 100px;
+}
+
+p {
+    padding:50px;
+    display: inline-block;
+    font-size: 20px;
+}
+
+img {
+    height: 200px;
+}
+
+.row {
+    display: flex;
+  }
+  
+.column {
+    flex: 10%;
+    padding: 1px;
+}

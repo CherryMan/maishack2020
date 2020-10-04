@@ -1,5 +1,38 @@
 <!DOCTYPE html>
-    <title></title>
-    <div>Your cat is a {{ prediction }} </div>
-    <img height = 500 src = "../static/{{ filename }}"></img>
+<html>
+    <head>
+        <link rel="stylesheet" href="../static/style.css">
+    </head>
+    <title>Cat breed predictor</title>
+    <body>
+        <div class="title">Your cat is a {{ prediction }} </div>
+        
+        
+        <div class="row">
+            <figure class="column">
+              <img src="../static/bengal.jpg">
+              <figcaption>Bengal</figcaption>
+            </figure>
+            <figure class="column">
+              <img src="../static/persian.jpg">
+              <figcaption>Persian</figcaption>
+            </figure>
+            <figure class="column">
+              <img src="../static/siamese.jpg">
+              <figcaption>Siamese</figcaption>
+            </figure>
+            <figure class="column">
+                <img src="../static/sphinx.png">
+                <figcaption>Sphinx</figcaption>
+            </figure>
+          </div>
+          <div class="row">
+            <figure class="column">
+                <img src = "../static/{{ filename }}">
+                <figcaption>{{ prediction }}</figcaption>
+            </figure>
+          </div>
+    </body>
+
+</html>
     

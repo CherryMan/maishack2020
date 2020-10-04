@@ -1,7 +1,41 @@
 <!DOCTYPE html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
+<html>
+  <head>
+    <link rel="stylesheet" href="../static/style.css">
+  </head>
+    <title>Cat breed predictor</title>
+    <body>
+      <div class="title">Upload an image of your cat!</div>
+      <p>
+        Using a convolutional neural network and 
+        <a href = "https://www.kaggle.com/ma7555/cat-breeds-dataset">
+          this
+        </a> 
+        dataset, we trained a model to classify cat images according to their breed.
+        Upload an image of your cat to find out what breed your furry friend belongs to!
+      </p>
+      <div class="row">
+        <figure class="column">
+          <img src="../static/bengal.jpg">
+          <figcaption>Bengal</figcaption>
+        </figure>
+        <figure class="column">
+          <img src="../static/persian.jpg">
+          <figcaption>Persian</figcaption>
+        </figure>
+        <figure class="column">
+          <img src="../static/siamese.jpg">
+          <figcaption>Siamese</figcaption>
+        </figure>
+        <figure class="column">
+          <img src="../static/sphinx.png">
+          <figcaption>Sphinx</figcaption>
+        </figure>
+      </div>
+
+      <form method=post enctype=multipart/form-data>
+        <input type=file name=file>
+        <input type=submit value=Upload>
+      </form>
+    </body>
+</html>
