@@ -12,6 +12,7 @@ import torch.optim as optim
 import torch.utils as utils
 import torchvision as tv
 import torchvision.transforms as transforms
+import torch.optim as optim
 
 DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(DEVICE)
@@ -149,3 +150,10 @@ if __name__ == '__main__':
     data = Data(class_type='breed')
     model_train(data)
     model_test(data)
+    import time
+    for train_batch, labels_batch in loader:
+        print(train_batch)
+        print(labels_batch)
+        time.sleep(1)
+
+print('Finished Training')
