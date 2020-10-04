@@ -23,7 +23,7 @@ torch.manual_seed(SEED)
 print(DEVICE)
 
 class Image:
-    SIZE = 40
+    SIZE = 48
 
     transform = transforms.Compose([
         transforms.Resize((SIZE, SIZE)),
@@ -31,68 +31,55 @@ class Image:
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
     ])
 
-    def load(fname):
-        return Image.transform(PIL.Image.open(fname).convert('RGB'))
+    def load(path):
+        return Image.transform(PIL.Image.open(path).convert('RGB'))
 
 
 class Dataset(utils.data.Dataset):
-    def __init__(self, data: pd.DataFrame, *, class_type, class_list):
+    def __init__(self, data, *, field, class_list):
         super(Dataset).__init__()
         self.data = data
-        self.class_type = class_type
+        self.field = field
         self.class_list = class_list
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
-        row = self.data.iloc[idx]
-        fname = row['fname']
-        try:
-            img = Image.load(fname)
-            label = self.class_list[row[self.class_type]]
-            return img, label, row.name
-        except Exception as e:
-            print(e)
-            print(row)
-            return None, None, None
+        row = self.data[idx]
+        img = Image.load(row['path'])
+        label = self.class_list[row[self.field]]
+        return img, label, row['idx']
 
 
 class Data:
-    def __init__(self, *, class_type):
-        pat = re.compile('^./images/.*/(\d+)_.*\.jpg$')
-        fs = glob.glob('./images/*/*.jpg')
-        fnames = {
-            int(pat.match(f)[1]): f
-            for f in glob.glob('./images/*/*.jpg')
-        }
-
-        data = pd.read_csv(
-            './data/cats.csv',
-            index_col='id',
-            usecols=['id', 'type', 'breed', 'age', 'gender', 'size', 'coat'],
-        )
-        data['fname'] = pd.Series(fnames)
-        data = data.dropna(subset=['fname'])
-
-        cols = data[class_type].value_counts().ge(CATEGORY_THRESH)
-        data = data[data[class_type].isin(cols[cols].index)]
-
-        self.data = data
-        self.classes = list(pd.unique(self.data[class_type]))
-        self.class_type = class_type
+    def __init__(self, *, field, imdir):
+        self.field = field
+        self.classes = os.listdir(imdir)
         self.class_list = {
             v: i for i, v in enumerate(self.classes)
         }
 
-        self.train, self.test = train_test_split(self.data,
-                       train_size=0.8, random_state=SEED, shuffle=True)
+        data = [
+            (d, os.listdir(os.path.join(imdir, d)))
+            for d in self.classes
+        ]
+
+        data = [
+            {field: d, 'path': os.path.join(imdir, d, f)}
+            for d, fs in filter(lambda x: len(x[1]) >= CATEGORY_THRESH, data)
+            for f in fs
+        ]
+
+        self.data = [{**x, 'idx': i} for i, x in enumerate(data)]
+
+        self.train, self.test = train_test_split(
+            self.data, train_size=0.8, random_state=SEED, shuffle=True)
 
         self.train_set = Dataset(self.train,
-            class_type=class_type, class_list=self.class_list)
-
+                                 field=field, class_list=self.class_list)
         self.test_set = Dataset(self.test,
-            class_type=class_type, class_list=self.class_list)
+                                field=field, class_list=self.class_list)
 
 
 class Net(nn.Module):
@@ -101,14 +88,14 @@ class Net(nn.Module):
         self.pool = nn.MaxPool2d(2, 2)
         self.conv1 = nn.Conv2d(3, din, 5)
         self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 7 * 7, 120)
+        self.fc1 = nn.Linear(16 * 9 ** 2, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, dout)
 
     def forward(self, x):
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
-        x = x.view(-1, 16 * 7 * 7)
+        x = x.view(-1, 16 * 9 ** 2)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
@@ -124,7 +111,7 @@ def model_train(data):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
-    for epoch in range(2):
+    for epoch in range(4):
 
         running_loss = 0.0
         for i, data in enumerate(loader, 1):
@@ -180,6 +167,6 @@ def model_test(data):
           (c, 100. * class_correct[i] / class_total[i], class_total[i]))
 
 if __name__ == '__main__':
-    data = Data(class_type='breed')
+    data = Data(field='breed', imdir='./raw-img')
     model_train(data)
     model_test(data)

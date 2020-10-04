@@ -3,4 +3,4 @@
 **Sheheryar Parvaz**  
 **Thomas Jiralerspong**
 
-Download and extract [archive.zip](https://www.kaggle.com/ma7555/cat-breeds-dataset) into project root.
+Download and extract [archive.zip](https://www.kaggle.com/alessiocorrado99/animals10) into project root.

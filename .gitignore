@@ -2,5 +2,6 @@ __pycache__/
 *.zip
 *.csv
 images/
+raw-img/
 data/
 *.pth
